@@ -9,8 +9,15 @@ create_blank_phrase <- function(phrase,ALPHABET) {
   blank_phrase <- rep("",nchar(phrase)) 
   # For loop to put underscores in blank_phrase
   for(i in 1:nchar(phrase)){
+    
     if(!is.na(match(tolower(substr(phrase,i,i)),ALPHABET))){
       blank_phrase[i] <- "_"
+    }
+    else if(substr(phrase,i,i) != " "){
+      blank_phrase[i] <- substr(phrase,i,i)
+    }
+    else{
+      blank_phrase[i] <- "-"
     }
   }
   blank_phrase

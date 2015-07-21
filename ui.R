@@ -17,6 +17,7 @@ shinyUI(fluidPage(
       h5("Try to guess the phrase!"),
       pre(textOutput("phrase")),
       pre(textOutput("hasWon"),
+          textOutput("wordsGuessed"),
           textOutput("guessLetter")),
       span(textOutput("guessVerify"), style = "color:red"),
       textInput("letter","Enter a letter: "),
@@ -26,6 +27,7 @@ shinyUI(fluidPage(
 
     mainPanel(
       imageOutput("stickFigure"),
+      h5("Guess letters to fill in the blanks before the little stick figure gets hung!"),
       uiOutput("restart")
     )
     

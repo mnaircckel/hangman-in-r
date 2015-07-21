@@ -24,25 +24,31 @@ shinyServer(function(input, output) {
   # Create values to manage Hangman game logic
   values$blank_phrase <- create_blank_phrase(phrase,ALPHABET)
   values$guesses <- 6
+  values$words_guessed <- c()
   
   output$guessLetter <- eventReactive(input$guess, {
     if(values$guesses > 0){
       if(verify() == " "){
         values$blank_phrase <- update_blank_phrase(values$phrase, values$blank_phrase, input$letter)
-        if(!phrase_contains_letter(values$phrase, values$blank_phrase, input$letter)){
+        if(!is.na(match(input$letter,values$words_guessed))){
+          paste0("You have already guessed \"", input$letter, "\". Try again.")
+        }
+        else if(!phrase_contains_letter(values$phrase, values$blank_phrase, input$letter)){
+          values$words_guessed <- append(values$words_guessed,input$letter)
           values$guesses = values$guesses-1
           paste0("You guessed \"", input$letter, "\", which is not contained in the phrase. Try again.")
         }
         else{
+          values$words_guessed <- append(values$words_guessed,input$letter)
           paste0("Your guess of \"", input$letter, "\" was correct!")
         }
       }
       else{
-        paste("")
+        paste0(" ")
       }
     }
     else{
-      paste("")
+      paste0(" ")
     }
   })
   
@@ -51,15 +57,16 @@ shinyServer(function(input, output) {
     values$phrase <- sample(WORD_BANK,1)
     values$blank_phrase <- create_blank_phrase(values$phrase,ALPHABET)
     values$guesses <- 6
+    values$words_guessed <- c()
   })
   
   
   output$phrase <- eventReactive(input$guess, {
-    paste(values$blank_phrase, collapse = " ")
+    paste(gsub("-","  ",gsub(", "," ",toString(values$blank_phrase))))
   })
   
   output$phrase <- renderText({
-    paste(values$blank_phrase, collapse = " ")
+    paste(gsub("-","  ",gsub(", "," ",toString(values$blank_phrase))))
   })
   
   
@@ -82,10 +89,10 @@ shinyServer(function(input, output) {
   
   output$hasWon <- renderText({
     if(player_has_won(values$blank_phrase)){
-      paste("You have correctly guessed the phrase!")
+      paste0("You have correctly guessed the phrase: \"", values$phrase,"\"!")
     }
     else if(values$guesses < 1){
-      paste0("Oh no, you have been hung! The phrase was \"", values$phrase,"\"")
+      paste0("Oh no, you have been hung! The phrase was: \"", values$phrase,"\"")
     }
     else if(values$guesses == 1){
       paste("You only have", values$guesses, "strike left!")
@@ -93,6 +100,10 @@ shinyServer(function(input, output) {
     else{
       paste("You have", values$guesses, "strikes left..")
     }
+  })
+  
+  output$wordsGuessed <- renderText({
+    paste0("Words guessed: ", paste0(values$words_guessed, collapse = ","))
   })
   
   output$stickFigure <- renderImage({

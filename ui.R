@@ -10,24 +10,23 @@ library(shiny)
 shinyUI(fluidPage(
 
   # Application title
-  titlePanel("Hangman in R"),
+  titlePanel("Shiny Framework - Hangman in R"),
   
   sidebarLayout(
     sidebarPanel(
       h5("Try to guess the phrase!"),
       pre(textOutput("phrase")),
-      h4(textOutput("hasWon")),
-      textInput("letter","Guess a letter: "),
-      actionButton("guess","Guess!"),
-      fluidRow(
-        column(width = 10,
-               textOutput("guessVerify"),
-               textOutput("guessLetter")
-        ))
+      pre(textOutput("hasWon"),
+          textOutput("guessLetter")),
+      span(textOutput("guessVerify"), style = "color:red"),
+      textInput("letter","Enter a letter: "),
+      actionButton("guess","Guess"), 
+      actionButton("restart","Restart")
     ),
 
     mainPanel(
-      imageOutput("stickFigure")
+      imageOutput("stickFigure"),
+      uiOutput("restart")
     )
     
   )

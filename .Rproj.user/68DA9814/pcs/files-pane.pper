@@ -1,9 +1,0 @@
-{
-    "path" : "~/hangman",
-    "sortOrder" : [
-        {
-            "ascending" : true,
-            "columnIndex" : 2
-        }
-    ]
-}

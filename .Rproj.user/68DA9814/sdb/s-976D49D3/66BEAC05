@@ -1,0 +1,17 @@
+{
+    "contents" : "\n# This is the server logic for a Shiny web application.\n# You can find out more about building applications with Shiny here:\n#\n# http://shiny.rstudio.com\n\nlibrary(shiny)\nsource(\"helpers.R\")\n\n# Global constants used for hangman\nWORD_BANK <- list(\"Best of both worlds\")\nALPHABET <- list('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')\n\nshinyServer(function(input, output) {\n  \n  # Get a phrase from the world bank\n  phrase <- sample(WORD_BANK,1)\n  \n  # Create values to manage Hangman game logic\n  values <- reactiveValues()\n  values$blank_phrase <- create_blank_phrase(phrase,ALPHABET)\n  values$guesses <- 4\n  \n  output$guessLetter <- eventReactive(input$guess, {\n    if(values$guesses > 0){\n      if(verify() == \" \"){\n        values$blank_phrase <- update_blank_phrase(phrase, values$blank_phrase, input$letter)\n        if(!phrase_contains_letter(phrase, values$blank_phrase, input$letter)){\n          values$guesses = values$guesses-1\n          paste0(\"You guessed \\\"\", input$letter, \"\\\", which is not contained in the phrase. Try again.\")\n        }\n        else{\n          paste0(\"Your guess of \\\"\", input$letter, \"\\\" was correct!\")\n        }\n      }\n      else{\n        paste0(\"\")\n      }\n    }\n    else{\n      paste0(\"\")\n    }\n  })\n  \n  \n  output$phrase <- eventReactive(input$guess, {\n    paste(values$blank_phrase, collapse = \" \")\n  })\n  \n  output$phrase <- renderText({\n    paste(values$blank_phrase, collapse = \" \")\n  })\n  \n  \n  verify <- renderText({\n    if(input$letter == ''){\n      paste(\"\")\n    }\n    else if(is.na(match(tolower(input$letter),list('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')))){\n      paste0(\"Invalid input \\\"\", input$letter, \"\\\", you must enter a letter.\")\n    }\n    else{\n      paste(\" \")\n    }\n  })\n  \n  output$guessVerify <- renderText({\n    verify()\n  })\n  \n  output$hasWon <- renderText({\n    if(player_has_won(values$blank_phrase)){\n      paste(\"You have correctly guessed the phrase!\")\n    }\n    else if(values$guesses < 1){\n      paste0(\"You are all out of guesses! The phrase was \\\"\", phrase,\"\\\"\")\n    }\n    else{\n      paste(\"You have\", values$guesses, \"incorrect guess(es) left.\")\n    }\n  })\n  \n  output$stickFigure <- renderImage({\n      return(list(\n        src = \"images/Hangman.jpg\",\n        contentType = \"image/jpeg\",\n        alt = \"Hangman\"\n      ))\n\n  }, deleteFile = FALSE)\n  \n\n})\n",
+    "created" : 1437422794026.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2827562184",
+    "id" : "66BEAC05",
+    "lastKnownWriteTime" : 1437438736,
+    "path" : "~/hangman/server.R",
+    "project_path" : "server.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
